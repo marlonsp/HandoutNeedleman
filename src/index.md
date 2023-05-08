@@ -19,7 +19,7 @@ Sobre o algoritmo
 
 As sequências são strings, e elas podem ou não ser de tamanhos diferentes. Você pode estar se perguntando: O que seria esse alinhamento das sequências?
 
-Alinhar as sequências seignifica que o alinhamento de sequências obtido ao aplicar o algoritmo de Needleman-Wunsch é o alinhamento ótimo entre as duas sequências, que maximiza o número de correspondências de caracteres ou símbolos em cada posição do alinhamento.
+Alinhar as sequências significa que o alinhamento de sequências obtido ao aplicar o algoritmo de Needleman-Wunsch é o alinhamento ótimo entre as duas sequências, que maximiza o número de correspondências de caracteres ou símbolos em cada posição do alinhamento.
 
 A outra entrada, o sistema de pontuação, é composto de 3 informações:
 
@@ -37,9 +37,9 @@ A matriz é preenchida usando as seguintes regras:
 2. Cada célula na matriz é preenchida com a pontuação máxima das três células adjacentes mais a pontuação da comparação de letras ou aminoácidos para essa célula.
 4. O caminho de volta através da matriz é usado para determinar a melhor correspondência entre as duas sequências.
 
-Veja um exemplo do preencimento da matriz de pontuação para o alinhamento das sequências GATT e GCAT:
+Veja um exemplo do preencimento da matriz de pontuação para o alinhamento das sequências GATT e GCAT, com match = +1, mismatch = -1 e indel = -1:
 
-:bubble 
+:img 
 
 Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinhamento, podemos calcular a pontuação final do alinhamento realizando a somatória dos matches, mismatches e indels:
 
@@ -67,13 +67,13 @@ Para os alinhamentos, temos o seguinte caso:
 | G | C | G | A | T | A | G |
 | - | - | - | - | - | - | - |
 |-1 |+1 |+1 |-1 |+1 |+1 |+1 |
-Obtendo ao fim da somatória uma pontuação de [[+2]].
+Obtendo ao fim da somatória uma pontuação de [[+3]].
 :::
 
 ???
 
 
-A partir daqui é do exemplo do hashi
+A partir daqui é do template, não faz parte do nosso handout
 ---------
 
 
@@ -130,15 +130,3 @@ hello world
 !!! Aviso
 Este é um exemplo de aviso, entre `md !!!`.
 !!!
-
-
-??? Exercício
-
-Este é um exemplo de exercício, entre `md ???`.
-
-::: Gabarito
-Este é um exemplo de gabarito, entre `md :::`.
-:::
-
-???
-
