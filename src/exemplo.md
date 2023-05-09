@@ -17,26 +17,29 @@ Sobre o algoritmo
 
 * Saídas: duas subsequências alinhadas;
 
-**Essa parte tá mal elaborada**
-
 As sequências são strings, e elas podem ou não ser de tamanhos diferentes. Você pode estar se perguntando: O que seria esse alinhamento das sequências?
 
-Alinhar as sequências seignifica que 
+Alinhar as sequências seignifica que o alinhamento de sequências obtido ao aplicar o algoritmo de Needleman-Wunsch é o alinhamento ótimo entre as duas sequências, que maximiza o número de correspondências de caracteres ou símbolos em cada posição do alinhamento.
 
 A outra entrada, o sistema de pontuação, é composto de 3 informações:
 
-* match
+* match: Quando as letras do mesmo index são iguais.
 
-* mismatch
+* mismatch: Quando as letras do mesmo index são diferentes.
 
-* gap
+* indel: Quando o melhor alinhamento para um certo index é a inserção ou remoção de uma base na sequência, chamado de gap.
 
-
-não fiz a partir daqui
 
 ??? Atividade 1
 
-Este é um exemplo de atividade, entre `md ???`.
+Tomando como pontuação:
+* match: +1;
+* mismatch e indel: -1.
+
+Calcule a pontuação total para as saídas do alinhamento:
+
+* ACG-TAG
+* GCGAT-G
 
 ::: Gabarito
 Este é um exemplo de gabarito, entre `md :::`.
