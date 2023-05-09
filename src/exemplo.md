@@ -29,6 +29,26 @@ A outra entrada, o sistema de pontuação, é composto de 3 informações:
 
 * indel: Quando o melhor alinhamento para um certo index é a inserção ou remoção de uma base na sequência, chamado de gap.
 
+A matriz de pontuação
+---------
+A matriz é preenchida usando as seguintes regras:
+
+1. A primeira linha e coluna da matriz são preenchidas com valores que correspondem à penalidade por inserções ou exclusões de letras ou aminoácidos.
+2. Cada célula na matriz é preenchida com a pontuação máxima das três células adjacentes mais a pontuação da comparação de letras ou aminoácidos para essa célula.
+4. O caminho de volta através da matriz é usado para determinar a melhor correspondência entre as duas sequências.
+
+Veja um exemplo do preencimento da matriz de pontuação para o alinhamento das sequências GATT e GCAT:
+
+:bubble 
+
+Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinhamento, podemos calcular a pontuação final do alinhamento realizando a somatória dos matches, mismatches e indels:
+
+| G | C | A | T | - |
+| G | - | A | T | T |
+| - | - | - | - | - |
+|+1 |-1 |+1 |+1 |-1 |
+Obtendo ao fim da somatória uma pontuação de [[+1]].
+
 
 ??? Atividade 1
 
@@ -39,10 +59,15 @@ Tomando como pontuação:
 Calcule a pontuação total para as saídas do alinhamento:
 
 * ACG-TAG
-* GCGAT-G
+* GCGATAG
 
 ::: Gabarito
-Este é um exemplo de gabarito, entre `md :::`.
+Para os alinhamentos, temos o seguinte caso:
+| A | C | G | - | T | A | G |
+| G | C | G | A | T | A | G |
+| - | - | - | - | - | - | - |
+|-1 |+1 |+1 |-1 |+1 |+1 |+1 |
+Obtendo ao fim da somatória uma pontuação de [[+2]].
 :::
 
 ???
