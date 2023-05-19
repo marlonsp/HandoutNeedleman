@@ -8,26 +8,239 @@ O algoritmo de Needleman-Wunsch é muito usado na área de bioinformática para 
 
 Esse algoritmo possui uma certa importância, uma vez que pode haver uma certa manipulação dos parâmetros, sendo muito beneficial para casos específicos. 
 
-![](exemplo.jpeg)
+Alinhamento de sequências
+---------
+Antes de abordarmos de fato o algorítmo de Needleman-Wunsch e como ele funciona, precisamos primeiro entender o que são os alinhamentos de sequências, ou strings, que são o objetivo final desse algorítmo.
 
-Sobre o algoritmo
+Os alinhamentos consistem em uma forma de se alterar duas sequências, adicionando os {red}(gaps) [[**-**]] (espaços vazios que não representam nenhuma letra), para que elas apresentem o mesmo tamanho, caso sejam diferentes, e tenham o maior número possível de letras alinhadas no mesmo index.
+
+Para exemplificar um caso de alinhamento, temos como entradas as sequências:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------------|---|---|---|---|---|---|
+| Sequência 1 | G | A | C | T |   |   |
+| Sequência 2 | G | C | A | T | C | T |
+
+
+Uma possível forma de se alinhar essas duas sequências, apenas inserindo gaps, seria:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------------|---|---|---|---|---|---|
+| Sequência 1 | G | **-** | A | **-** | C | T |
+| Sequência 2 | G | C | A | T | C | T |
+
+??? Atividade 1
+
+Para treinar e fixar o conceito de alinhamento de sequências, vamos treinar esse processe.
+
+Tendo como entradas as sequências:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | T | A |   |   |
+| Sequência 2 | C | C | A | T | T | A |   |
+
+Uma forma de alinhar as sequências, apenas inserindo gaps, seria:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | A |   |
+| Sequência 2 | C | C | A | T | T | A |   |
+
+Encontra outra forma de alinhas as mesmas sequências de entrada, porém de forma diferente da encontrada no exemplo.
+
+::: Gabarito
+
+Outra forma de alinhar as sequências, apenas inserindo gaps, seria:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | T | **-** | A |   |
+| Sequência 2 | C | C | A | T | T | A |   |
+:::
+???
+
+!!! Aviso
+É importante destacar que esse gabarito é apenas uma das diversas formas de alinhar uma sequência, como exemplo podemos alinhá-las usando ainda mais gaps:
+
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | **-** | A |
+| Sequência 2 | **-** | C | C | A | T | T | A |
+
+Tendo conhecimento desse grande número de possibilidades para se alinhar uma sequência, como vamos selecionar a melhor opção para cada caso?
+
+O próximo tópido do handout irá abordar essa questão.
+!!!
+
+O sistema de pontuação
 ---------
 
-* Entradas: duas sequências e um sistema de pontuação;
+Para selecionar o melhor alinhamento possível em cada caso, utiliza-se um sistema de pontuação, também chamado de função de score.
 
-* Saídas: duas subsequências alinhadas;
+Esse sistema consiste em comparar cada correspondência de elementos no mesmo índice das duas sequências já alinhadas, classificar essa correspondência e atribuir uma pontuação a ela.
 
-As sequências são strings, e elas podem ou não ser de tamanhos diferentes. Você pode estar se perguntando: O que seria esse alinhamento das sequências?
+Os tipos de correspondência possíveis são:
 
-Alinhar as sequências significa que o alinhamento de sequências obtido ao aplicar o algoritmo de Needleman-Wunsch é o alinhamento ótimo entre as duas sequências, que maximiza o número de correspondências de caracteres ou símbolos em cada posição do alinhamento.
+* **Match**: quando as elementos do mesmo índice são iguais.
 
-A outra entrada, o sistema de pontuação, é composto de 3 informações:
+* **Mismatch**: quando as elementos do mesmo índice são diferentes.
 
-* match: Quando as letras do mesmo index são iguais.
+* **Indel**: quando ao menos um dos elementos comparados é um gap.
 
-* mismatch: Quando as letras do mesmo index são diferentes.
+Como exemplo, podemos classificar as correspondências de um alinhamento da seguinte forma:
 
-* indel: Quando o melhor alinhamento para um certo index é a inserção ou remoção de uma base na sequência, chamado de gap.
+|index        | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------------|---|---|---|---|---|---|
+| Sequência 1 | G     |     **-** |     A |     **-** |        G |     T |
+| Sequência 2 | G     | C     | A     | T     |     C    | T     |
+| Tipo        | Match | Indel | Match | Indel | Mismatch | Match |
+
+Com essa classificação, podemos atribuir diferentes pontuação para cada tipo de correspondencia, dessa forma cada alinhamento terá um score final que irá depender da correspondência de cada elemento seu.
+
+Por exemplo, caso definíssemos como sistema de pontuação:
+
+* **Match**: +2.
+
+* **Mismatch**: -2.
+
+* **Indel**: -1
+
+Teremos como pontuação para o exemplo acima:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------------|---|---|---|---|---|---|
+| Sequência 1 | G     |     **-** |     A |     **-** |        G |     T |
+| Sequência 2 | G     | C     | A     | T     |     C    | T     |
+| Tipo        | Match | Indel | Match | Indel | Mismatch | Match |
+| Pontuação   | +2 | -1 | +2 | -1 | -2 | +2 |
+
+Por fim, teremos como score total do alinhamento a soma de cada posição: 
+
+$$ +2 -1 +2 -1 -2 +2 = 4 $$
+
+Dessa forma, podemos supor que uma alteração no sistema de pontuação poderá alterar diretamente o score final de um alinhamento.
+
+Por exemplo, para casos de comparação em que deverão ser priorizados alinhamentos com o menor número de gaps, podemos atribuir uma pontuação mais negativa para os casos de Indel, como -2 ou -3.
+
+Já para casos em que o número de gaps não seja tão relevante, mas queremos ao máximo evitar Mismatch, podemos atribuir uma pontuação mais negativa para os casos de Mismatch.
+
+Assim conseguimos manipular e classificar um alinhamento como melhor ou pior que outro através de seu score total.
+
+Para compreender melhor a influência do sistema de pontuação na escolha de um alinhamento, realize o seguinte exercício:
+
+??? Atividade 2
+
+Tendo como sistema de pontuação:
+
+* **Match**: +3.
+
+* **Mismatch**: -3.
+
+* **Indel**: -1
+
+Complete as lacunas e encontre os score final de cada um dos dois alinhamentos das mesmas sequências de entradas:
+
+Alinhamento 1:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | A |   |
+| Sequência 2 | C | C | A | T | T | A |   |
+| Tipo        |  |  |  |  |  |  |   |
+| Pontuação   |  |  |  |  |  |  |   |
+
+Alinhamento 2:
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | **-** | A |
+| Sequência 2 | **-** | C | C | A | T | T | A |
+| Tipo        |  |  |  |  |  |  |   |
+| Pontuação   |  |  |  |  |  |  |   |
+
+::: Gabarito
+
+Alinhamento 1:
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | A |   |
+| Sequência 2 | C | C | A | T | T | A |   |
+| Tipo        | Mismatch | Match | Mismatch | Indel | Match | Match |   |
+| Pontuação   | -3 | +3 | -3 | -1 | +3 | +3 |   |
+
+
+Score total: $$ -3 +3 -3 -1 +3 +3 = 2 $$
+
+
+Alinhamento 2:
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | **-** | A |
+| Sequência 2 | **-** | C | C | A | T | T | A |
+| Tipo        | Indel | Match | Mismatch | Indel | Match | Indel | Match |
+| Pontuação   | -1 | +3 | -3 | -1 | +3 | -1 | +3 |
+
+
+Score total: $$ -1 +3 -3 -1 +3 -1 +3 = 3 $$
+:::
+???
+
+??? Atividade 3
+
+Tendo como sistema de pontuação:
+
+* **Match**: +3.
+
+* **Mismatch**: -1.
+
+* **Indel**: -3
+
+Complete as lacunas e encontre os score final de cada um dos dois alinhamentos das mesmas sequências de entradas:
+
+Alinhamento 1:
+
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | A |   |
+| Sequência 2 | C | C | A | T | T | A |   |
+| Tipo        |  |  |  |  |  |  |   |
+| Pontuação   |  |  |  |  |  |  |   |
+
+Alinhamento 2:
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | **-** | A |
+| Sequência 2 | **-** | C | C | A | T | T | A |
+| Tipo        |  |  |  |  |  |  |   |
+| Pontuação   |  |  |  |  |  |  |   |
+
+::: Gabarito
+
+Alinhamento 1:
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | A |   |
+| Sequência 2 | C | C | A | T | T | A |   |
+| Tipo        | Mismatch | Match | Mismatch | Indel | Match | Match |   |
+| Pontuação   | -1 | +3 | -1 | -3 | +3 | +3 |   |
+
+
+Score total: $$ -1 +3 -1 -3 +3 +3 = 4 $$
+
+
+Alinhamento 2:
+|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|-------------|---|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | **-** | A |
+| Sequência 2 | **-** | C | C | A | T | T | A |
+| Tipo        | Indel | Match | Mismatch | Indel | Match | Indel | Match |
+| Pontuação   | -3 | +3 | -1 | -3 | +3 | -3 | +3 |
+
+
+Score total: $$ -3 +3 -1 -3 +3 -3 +3 = -1 $$
+:::
+???
 
 A matriz de pontuação
 ---------
@@ -39,7 +252,7 @@ A matriz é preenchida usando as seguintes regras:
 
 Veja um exemplo do preencimento da matriz de pontuação para o alinhamento das sequências GATT e GCAT, com match = +1, mismatch = -1 e indel = -1:
 
-:img 
+:matriz
 
 Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinhamento, podemos calcular a pontuação final do alinhamento realizando a somatória dos matches, mismatches e indels:
 
@@ -50,7 +263,7 @@ Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinha
 Obtendo ao fim da somatória uma pontuação de [[+1]].
 
 
-??? Atividade 1
+??? Atividade 2
 
 Tomando como pontuação:
 * match: +1;
@@ -97,7 +310,7 @@ imagens estão. Essa pasta também deve estar em *img*.
 
 :bubble
 
-??? Atividade 2
+??? Atividade 3
 
 Preencha a primeira posição.
 
@@ -130,3 +343,5 @@ hello world
 !!! Aviso
 Este é um exemplo de aviso, entre `md !!!`.
 !!!
+
+![](exemplo.jpeg)
