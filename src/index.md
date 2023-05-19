@@ -12,7 +12,7 @@ Alinhamento de sequências
 ---------
 Antes de abordarmos de fato o algorítmo de Needleman-Wunsch e como ele funciona, precisamos primeiro entender o que são os alinhamentos de sequências, ou strings, que são o objetivo final desse algorítmo.
 
-Os alinhamentos consistem em uma forma de se alterar duas sequências, adicionando os {red}(gaps) [[**-**]] (espaços vazios que não representam nenhuma letra), para que elas apresentem o mesmo tamanho, caso sejam diferentes, e tenham o maior número possível de letras alinhadas no mesmo index.
+Os alinhamentos consistem em uma forma de se alterar duas sequências, adicionando {red}(gaps) [[**-**]] (espaços vazios que não representam nenhuma letra), para que elas apresentem o mesmo tamanho, caso sejam diferentes, e tenham o maior número possível de letras alinhadas no mesmo index.
 
 Para exemplificar um caso de alinhamento, temos como entradas as sequências:
 
@@ -31,7 +31,7 @@ Uma possível forma de se alinhar essas duas sequências, apenas inserindo gaps,
 
 ??? Atividade 1
 
-Para treinar e fixar o conceito de alinhamento de sequências, vamos treinar esse processe.
+Para treinar e fixar o conceito de alinhamento de sequências, vamos treinar esse processo.
 
 Tendo como entradas as sequências:
 
@@ -97,7 +97,7 @@ Como exemplo, podemos classificar as correspondências de um alinhamento da segu
 | Sequência 2 | G     | C     | A     | T     |     C    | T     |
 | Tipo        | Match | Indel | Match | Indel | Mismatch | Match |
 
-Com essa classificação, podemos atribuir diferentes pontuação para cada tipo de correspondencia, dessa forma cada alinhamento terá um score final que irá depender da correspondência de cada elemento seu.
+Com essa classificação, podemos atribuir diferentes pontuações para cada tipo de correspondência, dessa forma cada alinhamento terá um score final que irá depender da correspondência de cada elemento seu.
 
 Por exemplo, caso definíssemos como sistema de pontuação:
 
@@ -140,7 +140,7 @@ Tendo como sistema de pontuação:
 
 * **Indel**: -1
 
-Complete as lacunas e encontre os score final de cada um dos dois alinhamentos das mesmas sequências de entradas:
+Complete as lacunas e encontre o score final de cada um dos dois alinhamentos das mesmas sequências de entradas:
 
 Alinhamento 1:
 
@@ -196,16 +196,16 @@ Tendo como sistema de pontuação:
 
 * **Indel**: -3
 
-Complete as lacunas e encontre os score final de cada um dos dois alinhamentos das mesmas sequências de entradas:
+Complete as lacunas e encontre o score final de cada um dos dois alinhamentos das mesmas sequências de entradas:
 
 Alinhamento 1:
 
-|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
-|-------------|---|---|---|---|---|---|---|
-| Sequência 1 | A | C | G | **-** | T | A |   |
-| Sequência 2 | C | C | A | T | T | A |   |
-| Tipo        |  |  |  |  |  |  |   |
-| Pontuação   |  |  |  |  |  |  |   |
+|index        | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------------|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | A |
+| Sequência 2 | C | C | A | T | T | A |
+| Tipo        |   |   |   |   |   |   |
+| Pontuação   |   |   |   |   |   |   |
 
 Alinhamento 2:
 |index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
@@ -218,12 +218,12 @@ Alinhamento 2:
 ::: Gabarito
 
 Alinhamento 1:
-|index        | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
-|-------------|---|---|---|---|---|---|---|
-| Sequência 1 | A | C | G | **-** | T | A |   |
-| Sequência 2 | C | C | A | T | T | A |   |
-| Tipo        | Mismatch | Match | Mismatch | Indel | Match | Match |   |
-| Pontuação   | -1 | +3 | -1 | -3 | +3 | +3 |   |
+|index        | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------------|---|---|---|---|---|---|
+| Sequência 1 | A | C | G | **-** | T | A |
+| Sequência 2 | C | C | A | T | T | A |
+| Tipo        | Mismatch | Match | Mismatch | Indel | Match | Match |
+| Pontuação   | -1 | +3 | -1 | -3 | +3 | +3 |
 
 
 Score total: $$ -1 +3 -1 -3 +3 +3 = 4 $$
@@ -246,11 +246,35 @@ A matriz de pontuação
 ---------
 A matriz é preenchida usando as seguintes regras:
 
-1. A primeira linha e coluna da matriz são preenchidas com valores que correspondem à penalidade por inserções ou exclusões de letras ou aminoácidos.
-2. Cada célula na matriz é preenchida com a pontuação máxima das três células adjacentes mais a pontuação da comparação de letras ou aminoácidos para essa célula.
-4. O caminho de volta através da matriz é usado para determinar a melhor correspondência entre as duas sequências.
+1. As células na primeira linha e coluna da matriz são preenchidas com valores que correspondem à penalidade por inserções ou exclusões de letras ou aminoácidos, pois há apenas o uso da célula da esquerda somado ao indel, no caso da primeira linha, e o uso da célula de cima somado ao indel, no caso da primeira coluna.
+2. Cada célula na matriz é preenchida com a pontuação máxima das três células adjacentes (de cima, da esquerda e da diagonal superior esquerda) mais a pontuação da comparação de letras ou aminoácidos para essa célula.
+3. O caminho de volta através da matriz é usado para determinar a melhor correspondência entre as duas sequências.
 
-Veja um exemplo do preencimento da matriz de pontuação para o alinhamento das sequências GATT e GCAT, com match = +1, mismatch = -1 e indel = -1:
+Para entender a montagem da matriz de pontuação, vamos agora ver um exemplo para o alinhamento das sequências **GATT** e **GCAT**, com **match = +1**, **mismatch = -1** e **indel = -1**:  
+
+**Preencher primeira linha e coluna da matriz:**
+
+A primeira posição é preenchida com 0, pois ainda não foi feita nenhuma comparação e não foram acrescentados ou retirados pontos.
+
+![](img0.png)
+
+
+??? Atividade 4
+
+Seguindo a primeira regra, complete a primeira linha e a primeira coluna, lembrando que o **indel = -1**.
+
+::: Gabarito
+
+![](imgcoluna.png)
+
+:::
+
+???
+
+Agora que já temos a estrutura da matriz, temoms que completá-la!
+
+A partir daqui precisa modificar, melhorar e terminar
+---------
 
 :matriz
 
@@ -263,7 +287,7 @@ Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinha
 Obtendo ao fim da somatória uma pontuação de [[+1]].
 
 
-??? Atividade 2
+??? Atividade 5
 
 Tomando como pontuação:
 * match: +1;
@@ -308,18 +332,6 @@ $$\lim_{n \rightarrow \infty} \frac{f(n)}{g(n)} \leq 1$$
 Para inserir uma animação, use `md :` seguido do nome de uma pasta onde as
 imagens estão. Essa pasta também deve estar em *img*.
 
-:bubble
-
-??? Atividade 3
-
-Preencha a primeira posição.
-
-::: Gabarito
-Este é um exemplo de gabarito.
-:::
-
-???
-
 Você também pode inserir código, inclusive especificando a linguagem.
 
 ``` py
@@ -338,10 +350,5 @@ Se não especificar nenhuma, o código fica com colorização de terminal.
 ```
 hello world
 ```
-
-
-!!! Aviso
-Este é um exemplo de aviso, entre `md !!!`.
-!!!
 
 ![](exemplo.jpeg)
