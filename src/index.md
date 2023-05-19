@@ -247,7 +247,7 @@ A matriz de pontuação
 A matriz é preenchida usando as seguintes regras:
 
 1. As células na primeira linha e coluna da matriz são preenchidas com valores que correspondem à penalidade por inserções ou exclusões de letras ou aminoácidos, pois há apenas o uso da célula da esquerda somado ao indel, no caso da primeira linha, e o uso da célula de cima somado ao indel, no caso da primeira coluna.
-2. Cada célula na matriz é preenchida com a pontuação máxima das três células adjacentes (de cima, da esquerda e da diagonal superior esquerda) mais a pontuação da comparação de letras ou aminoácidos para essa célula.
+2. Cada célula na matriz é preenchida ao comparar a pontuação final das três células adjacentes (de cima, da esquerda e da diagonal superior esquerda), cada uma somada ao indel, match ou mismatch, e escolher a maior pontuação para essa célula. Não se assuste, será explicado em mais detalhes.
 3. O caminho de volta através da matriz é usado para determinar a melhor correspondência entre as duas sequências.
 
 Para entender a montagem da matriz de pontuação, vamos agora ver um exemplo para o alinhamento das sequências **GATT** e **GCAT**, com **match = +1**, **mismatch = -1** e **indel = -1**:  
@@ -265,13 +265,60 @@ Seguindo a primeira regra, complete a primeira linha e a primeira coluna, lembra
 
 ::: Gabarito
 
-![](imgcoluna.png)
+![](imgbase.png)
 
 :::
 
 ???
 
-Agora que já temos a estrutura da matriz, temoms que completá-la!
+Agora que já temos a estrutura da matriz, temos que completá-la!
+
+Relembrando a segunda regra, para resolver uma única célula (em azul), devemos usar as 3 vizinhas (em vermelho).
+
+![](celula1.png)
+
+São feitos 3 cálculos. Dois deles, das células da esquerda e da direita, utilizam o indel (-1). A terceira conta é baseada no match (+1) ou mismatch (-1), então a variável usada pode variar.
+
+$$ totalEsquerda =  esquerda + indel $$
+$$ totalCima =  cima + indel $$
+$$ totalDiagonal =  diagonal + (mis)match $$
+
+Para a primeira célula, levando em conta que há um match, as três contas serão:
+
+$$ totalEsquerda =  - 1 - 1 = - 2 $$
+$$ totalCima =  - 1 - 1 = - 2 $$
+$$ totalDiagonal =  0 + 1 = 1 $$
+
+Com as 3 contas feitas, compara-se os 3 resultados e a maior solução, totalDiagonal = 1, é colocada na célula.
+
+![](celula2.png)
+
+Agora fazendo na segunda célula.
+
+![](celula3.png)
+
+Para a segunda célula, levando em conta que há um mismatch, as três contas serão:
+
+$$ totalEsquerda =  1 - 1 = 0 $$
+$$ totalCima =  - 2 - 1 = - 3 $$
+$$ totalDiagonal =  -1 - 1 = - 2 $$
+
+Fazendo o mesmo passo de antes, coloca-se na célula o totalEsquerda = 0 na célula.
+
+![](celula4.png)
+
+??? Atividade 5
+
+Agora é a sua vez de fazer! Complete a matriz, se lembrando dos matches e mismatches.
+
+::: Gabarito
+
+![](completa.png)
+
+:::
+
+???
+
 
 A partir daqui precisa modificar, melhorar e terminar
 ---------
@@ -286,53 +333,15 @@ Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinha
 |+1 |-1 |+1 |+1 |-1 |
 Obtendo ao fim da somatória uma pontuação de [[+1]].
 
-
-??? Atividade 5
-
-Tomando como pontuação:
-* match: +1;
-* mismatch e indel: -1.
-
-Calcule a pontuação total para as saídas do alinhamento:
-
-* ACG-TAG
-* GCGATAG
-
-::: Gabarito
-Para os alinhamentos, temos o seguinte caso:
-| A | C | G | - | T | A | G |
-| G | C | G | A | T | A | G |
-| - | - | - | - | - | - | - |
-|-1 |+1 |+1 |-1 |+1 |+1 |+1 |
-Obtendo ao fim da somatória uma pontuação de [[+3]].
-:::
-
-???
-
-
-A partir daqui é do template, não faz parte do nosso handout
+A partir daqui é do template
 ---------
 
 
-Para tabelas, usa-se a [notação do
-MultiMarkdown](https://fletcher.github.io/MultiMarkdown-6/syntax/tables.html),
-que é muito flexível. Vale a pena abrir esse link para saber todas as
-possibilidades.
-
-| coluna a | coluna b |
-|----------|----------|
-| 1        | 2        |
-
-Ao longo de um texto, você pode usar *itálico*, **negrito**, {red}(vermelho) e
-[[tecla]]. Também pode usar uma equação LaTeX: $f(n) \leq g(n)$. Se for muito
+Para tabelas: [notação do
+MultiMarkdown](https://fletcher.github.io/MultiMarkdown-6/syntax/tables.html), *itálico*, **negrito**, {red}(vermelho) e [[tecla]]. Equação: $f(n) \leq g(n)$. Se for muito
 grande, você pode isolá-la em um parágrafo.
 
 $$\lim_{n \rightarrow \infty} \frac{f(n)}{g(n)} \leq 1$$
-
-Para inserir uma animação, use `md :` seguido do nome de uma pasta onde as
-imagens estão. Essa pasta também deve estar em *img*.
-
-Você também pode inserir código, inclusive especificando a linguagem.
 
 ``` py
 def f():
@@ -344,8 +353,6 @@ void f() {
     printf("hello world\n");
 }
 ```
-
-Se não especificar nenhuma, o código fica com colorização de terminal.
 
 ```
 hello world
