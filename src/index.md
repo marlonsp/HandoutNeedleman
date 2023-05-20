@@ -320,7 +320,7 @@ Agora é a sua vez de fazer! Complete a matriz, se lembrando dos matches e misma
 ???
 
 
-A partir daqui precisa modificar, melhorar e terminar
+Finalizando a matriz
 ---------
 
 :matriz
@@ -333,29 +333,41 @@ Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinha
 |+1 |-1 |+1 |+1 |-1 |
 Obtendo ao fim da somatória uma pontuação de [[+1]].
 
-A partir daqui é do template
+Traceback da Matriz
 ---------
 
 
-Para tabelas: [notação do
-MultiMarkdown](https://fletcher.github.io/MultiMarkdown-6/syntax/tables.html), *itálico*, **negrito**, {red}(vermelho) e [[tecla]]. Equação: $f(n) \leq g(n)$. Se for muito
-grande, você pode isolá-la em um parágrafo.
+Já sabendo todas as etapas de construção da matriz, a parte final do algorítmo envolve fazer o traceback das células para determinar o alinhamento de ambas as sequências.
 
-$$\lim_{n \rightarrow \infty} \frac{f(n)}{g(n)} \leq 1$$
+![](traceback.png)
 
-``` py
-def f():
-    print('hello world')
-```
+Começando na célula mais a direita, e mais abaixo, se escolhe o caminho que tenha o valor mais baixo. 
 
-``` c
-void f() {
-    printf("hello world\n");
-}
-```
+Cada passo durante o traceback, uma atitude é tomada em relação às sequências. Ao se escolher a célula acima a que você está no momento, é criado um gap na sequência à esquerda da matriz, analogamente, ao se escolher a célula da esquerda, um gap será criado na sequência no topo da matriz. Escolher a célula da diagonal, que seria o caso mais comum, é definido como um match ou um mismatch.
 
-```
-hello world
-```
+Ao término dessa etapa, é realizado a soma de cada um dos passos tomados em que:
+
+$$ match =  1 $$
+$$ mismatch =  -1 $$
+$$ gap =  -1 $$
+
+Relembrando que essa é apenas uma das possíveis atribuições desses valores, podendo mudar de acordo com seu objetivo.
 
 ![](exemplo.jpeg)
+
+Portanto, nesse caso o caso ótimo seria usando os passos:
+
+$$ Diagonal, diagonal, diagonal, diagonal, cima, diagonal, esquerda, diagonal $$
+
+Resultando em:
+
+$$ - 1 + 1 - 1 - 1 + 1 + 1 - 1 + 1 = 0$$
+
+Resultando no alinhamento:
+
+|index        | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|-------------|---|---|---|---|---|---|---|---|
+| Sequência 1 | G | C | A | T | - | G | C | G |
+| Sequência 2 | G | - | A | T | T | A | C | A |
+| Tipo        | Match | Indel | Match | Match | Indel | Mismatch |Match | Mismatch |
+| Pontuação   | +1 | -1 | +1 | +1 | -1 | -1 | +1 | -1 |
