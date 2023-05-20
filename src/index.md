@@ -353,9 +353,12 @@ $$ gap =  -1 $$
 
 Relembrando que essa é apenas uma das possíveis atribuições desses valores, podendo mudar de acordo com seu objetivo.
 
-![](exemplo.jpeg)
+Exemplo de finalização do algoritmo
+---------
 
-Portanto, nesse caso o caso ótimo seria usando os passos:
+Utilizando essa matriz como exemplo para a última etapa do processo, o caso ótimo seria usando os passos:
+
+![](exemplo.jpeg)
 
 $$ Diagonal, diagonal, diagonal, diagonal, cima, diagonal, esquerda, diagonal $$
 
@@ -363,7 +366,7 @@ Resultando em:
 
 $$ - 1 + 1 - 1 - 1 + 1 + 1 - 1 + 1 = 0$$
 
-Resultando no alinhamento:
+E por fim, o alinhamento final seria:
 
 |index        | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |-------------|---|---|---|---|---|---|---|---|
