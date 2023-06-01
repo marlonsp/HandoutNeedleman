@@ -244,13 +244,30 @@ Score total: $$ -3 +3 -1 -3 +3 -3 +3 = -1 $$
 
 A matriz de pontuação
 ---------
-A matriz é preenchida usando as seguintes regras:
+
+Para preecher a matriz de pontuação de forma analítica, é necessário comparar todas as células até o índice escolhido tanto da coluna quanto da linha. Vamos agora ver um exemplo para o alinhamento das sequências **GATT** e **GCAT**, com **match = +1**, **mismatch = -1** e **indel = -1**:  
+
+![](valor2.png)
+
+Para saber o valor dessa célula que se localiza na posição (4,2) é necessário analisar parcialmente as duas sequências até sua segunda letra. Portanto a comparação seria entre GCA e G (vale lembrar que como a matriz tem uma casa vazia na primeira célula para ambas sequências, a posição 2 de linha ou coluna da matriz terá apenas uma letra da sequência correspondente):
+
+![](valor3.png)
+
+| G | C | A |
+| G | - | - |
+| - | - | - |
+| 1 |-1 |-1 |
+
+Dessa forma o valor encontrado da célula, como já mostrado na imagem é -1.
+
+Porém, ao aplicar o algorítmo para sequências muito grandes, a resolução analítica teria um grande gasto computacional, fazendo-se necessário uma resolução numérica para facilitar.
+
+Essa resolução se baseia no fato de que ao você, por exemplo, descer uma casa desse problema para a posição (4,3), seria análogo a apenas adicionar uma letra ao exemplo anterior, portanto é possível você analisar apenas as 3 casas vizinhas da célula, as da esquerda, cima e diagonal-esquerda. Dessa forma, a resolução analítica preenche a matriz de maneira recursiva, começando na casa (0,0) e indo até a de maior valor.
+
+A matriz é preenchida de maneira numérica usando as seguintes regras:
 
 1. As células na primeira linha e coluna da matriz são preenchidas com valores que correspondem à penalidade por inserções ou exclusões de letras ou aminoácidos, pois há apenas o uso da célula da esquerda somado ao indel, no caso da primeira linha, e o uso da célula de cima somado ao indel, no caso da primeira coluna.
-2. Cada célula na matriz é preenchida ao comparar a pontuação final das três células adjacentes (de cima, da esquerda e da diagonal superior esquerda), cada uma somada ao indel, match ou mismatch, e escolher a maior pontuação para essa célula. Não se assuste, será explicado em mais detalhes.
-3. O caminho de volta através da matriz é usado para determinar a melhor correspondência entre as duas sequências.
-
-Para entender a montagem da matriz de pontuação, vamos agora ver um exemplo para o alinhamento das sequências **GATT** e **GCAT**, com **match = +1**, **mismatch = -1** e **indel = -1**:  
+2. Cada célula na matriz é preenchida ao comparar a pontuação final das três células adjacentes (de cima, da esquerda e da diagonal superior esquerda), cada uma somada ao indel, match ou mismatch, e escolher a maior pontuação para essa célula. Não se assuste, será explicado em mais detalhes.  
 
 **Preencher primeira linha e coluna da matriz:**
 
