@@ -323,8 +323,6 @@ Agora é a sua vez de fazer! Complete a matriz, se lembrando dos matches e misma
 Finalizando a matriz
 ---------
 
-:matriz
-
 Ao fim do preenchimento da matriz e após encontrar a solução ótima do alinhamento, podemos calcular a pontuação final do alinhamento realizando a somatória dos matches, mismatches e indels:
 
 | G | C | A | T | - |
